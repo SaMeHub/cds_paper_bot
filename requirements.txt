@@ -1,0 +1,9 @@
+daiquiri==1.5.0
+feedparser==5.2.1
+pylatexenc==1.4
+maya==0.6.1
+requests==2.21.0
+Wand==0.5.1
+imageio==2.5.0
+twython==3.7.0
+lxml==4.3.3

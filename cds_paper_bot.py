@@ -271,7 +271,7 @@ def process_images(identifier, downloaded_image_list, post_gif, use_wand=True, u
 def get_cover_image(input_doc):
     """Turn firt page of document into an image"""
     logger.info(f"Turning first page of {input_doc} into an image(path) ...")
-    output_image = input_doc.lower().replace(".pdf", ".png")
+    output_image = input_doc.replace(".pdf", ".png").replace(".PDF", ".PNG")
     command = f"convert {input_doc}[0] {output_image}"
     execute_command(command)
     return output_image

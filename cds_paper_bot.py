@@ -230,14 +230,11 @@ def process_images(identifier, downloaded_image_list, post_gif, use_wand=True, u
         for image_file in image_list:
             with Image(filename=image_file) as foreground:
                 foreground.format = 'gif'
-                image_file = image_file.replace(
-                    '.%s' % new_image_format, '.gif')
+                image_file = image_file.replace('.%s' % new_image_format, '.gif')
                 # foreground.transform(resize="{0}x{1}".format(*max_dim))
                 add_margin = 1.03
-                with Image(width=int(max_dim[0]*add_margin), height=int(max_dim[1]*add_margin),
-                           background=Color('white')) as out:
-                    left = int(
-                        (max_dim[0]*add_margin - foreground.size[0]) / 2)
+                with Image(width=int(max_dim[0]*add_margin), height=int(max_dim[1]*add_margin), background=Color('white')) as out:
+                    left = int((max_dim[0]*add_margin - foreground.size[0]) / 2)
                     top = int((max_dim[1]*add_margin - foreground.size[1]) / 2)
                     out.composite(foreground, left=left, top=top)
                     out.save(filename=image_file)
@@ -268,12 +265,17 @@ def process_images(identifier, downloaded_image_list, post_gif, use_wand=True, u
         image_list = ['{id}/{id}.gif'.format(id=identifier)]
     return image_list
 
-def get_cover_image(input_doc):
+def get_cover_image(input_doc, use_wand=True):
     """Turn firt page of document into an image"""
     logger.info(f"Turning first page of {input_doc} into an image(path) ...")
     output_image = input_doc.replace(".pdf", ".png").replace(".PDF", ".PNG")
-    command = f"convert {input_doc}[0] {output_image}"
-    execute_command(command)
+    if use_wand:
+        first_page = Image(blob=input_doc).sequence[0]
+        with Image(first_page) as i:
+            i.format = 'png'
+            i.background_color = Color('white')
+            i.alpha_channel = 'remove'
+            i.save(filename=output_image)
     return output_image
 
 def twitter_auth(auth_dict):

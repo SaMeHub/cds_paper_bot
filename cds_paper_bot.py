@@ -268,7 +268,8 @@ def process_images(identifier, downloaded_image_list, post_gif, use_wand=True, u
 def get_cover_image(input_doc, use_wand=True):
     """Turn firt page of document into an image"""
     logger.info(f"Turning first page of {input_doc} into an image(path) ...")
-    output_image = input_doc.replace(".pdf", ".png").replace(".PDF", ".PNG")
+    output_image = "00-" + input_doc
+    re.sub("(?i)\.pdf",".png", output_image)
     if use_wand:
         with Image(filename=input_doc) as doc:
             first_page = doc.sequence[0]
@@ -451,6 +452,8 @@ def main():
     list_analyses = False
     post_gif = True
     use_arxiv_link = False
+    add_cover = False
+    use_only_cover = False
 
     # parse arguments
     parser = argparse.ArgumentParser()
@@ -474,6 +477,10 @@ def main():
                         type=str, default="auth.ini")
     parser.add_argument("--arXiv", help="use arXiv link",
                         action="store_true")
+    parser.add_argument("--addCover", help="add cover as image",
+                        action="store_true")
+    parser.add_argument("--useOnlyCover", help="use only cover page as image (implies --addCover)",
+                        action="store_true")
     args = parser.parse_args()
     max_tweets = args.max
     if args.dry:
@@ -492,6 +499,10 @@ def main():
     feed_file = args.config
     auth_file = args.auth
     use_arxiv_link = args.arXiv
+    add_cover = args.addCover
+    use_only_cover = args.useOnlyCover
+    if use_only_cover:
+        add_cover = True
 
     config = load_config(experiment, feed_file, auth_file)
 
@@ -663,9 +674,8 @@ def main():
                        (img_path.rsplit("/", 1)[1].startswith("."))):
                     downloaded_image_list.append(img_path)
 
-        if len(downloaded_doc_list) == 1:
+        if add_cover and len(downloaded_doc_list) == 1:
             downloaded_image_list[:0] = [get_cover_image(downloaded_doc_list[0])]
-            logger.info(f"...{get_cover_image(downloaded_doc_list[0])}")
             logger.info(downloaded_image_list)
 
         image_ids = []

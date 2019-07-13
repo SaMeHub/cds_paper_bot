@@ -270,12 +270,13 @@ def get_cover_image(input_doc, use_wand=True):
     logger.info(f"Turning first page of {input_doc} into an image(path) ...")
     output_image = input_doc.replace(".pdf", ".png").replace(".PDF", ".PNG")
     if use_wand:
-        first_page = Image(blob=input_doc).sequence[0]
-        with Image(first_page) as i:
-            i.format = 'png'
-            i.background_color = Color('white')
-            i.alpha_channel = 'remove'
-            i.save(filename=output_image)
+        with Image(filename=input_doc) as doc:
+            first_page = doc.sequence[0]
+            with Image(first_page) as img:
+                img.format = 'png'
+                img.background_color = Color('white')
+                img.alpha_channel = 'remove'
+                img.save(filename=output_image)
     return output_image
 
 def twitter_auth(auth_dict):

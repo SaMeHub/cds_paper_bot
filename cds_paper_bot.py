@@ -268,6 +268,13 @@ def process_images(identifier, downloaded_image_list, post_gif, use_wand=True, u
         image_list = ['{id}/{id}.gif'.format(id=identifier)]
     return image_list
 
+def get_cover_image(input_doc):
+    """Turn firt page of document into an image"""
+    logger.info(f"Turning first page of {input_doc} into an image(path) ...")
+    output_image = input_doc.lower().replace(".pdf", ".png")
+    command = f"convert {input_doc}[0] {output_image}"
+    execute_command(command)
+    return output_image
 
 def twitter_auth(auth_dict):
     """Authenticate to twitter."""
@@ -283,7 +290,6 @@ def twitter_auth(auth_dict):
         logger.error(twitter)
         sys.exit(1)
     return twitter
-
 
 def load_config(experiment, feed_file, auth_file):
     """Load configs into dict."""
@@ -654,6 +660,11 @@ def main():
                        (img_path.rsplit("/", 1)[1].startswith("."))):
                     downloaded_image_list.append(img_path)
 
+        if len(downloaded_doc_list) == 1:
+            downloaded_image_list[:0] = [get_cover_image(downloaded_doc_list[0])]
+            logger.info(f"...{get_cover_image(downloaded_doc_list[0])}")
+            logger.info(downloaded_image_list)
+
         image_ids = []
         if downloaded_image_list:
             image_list = process_images(outdir, downloaded_image_list, post_gif)
@@ -694,7 +705,7 @@ def main():
         # logger.info(title_temp)
 
         # skip entries without media
-        if downloaded_image_list:
+        if len(downloaded_image_list) > 1:
             if not dry_run:
                 tweet_count += 1
                 tweet_response = tweet(twitter, type_hashtag, title_formatted, identifier, link, conf_hashtags, phys_hashtags, image_ids, post_gif, config['AUTH']['BOT_HANDLE'])

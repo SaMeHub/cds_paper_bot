@@ -103,8 +103,7 @@ def read_html(html_url):
 
 def format_title(title):
     """format the publication title"""
-    logger.info("Formatting title.")
-    logger.info(title)
+    logger.info(f"... formatting title \"{title}\"")
     title = title.replace("\\sqrt s", "\\sqrt{s}")
     title = title.replace(" \\bar{", "\\bar{")
     if re.search(r"rightarrow\S", title):
@@ -117,9 +116,9 @@ def format_title(title):
     try:
         text_title = LatexNodes2Text().latex_to_text(title)
     except LatexWalkerError as identifier:
-        logger.error(identifier)
+        logger.error(f"LatexWalkerError in {identifier}")
         text_title = title
-    logger.debug(text_title)
+    logger.debug(f"... text title {text_title}")
     # insert spaces before and after the following characters
     char_with_spaces = ["=", "→"]
     for my_char in char_with_spaces:
@@ -152,10 +151,8 @@ def execute_command(command):
 
 def process_images(identifier, downloaded_image_list, post_gif, use_wand=True, use_imageio=True):
     """Convert/resize all images to png."""
-    logger.info("Processing %d images." % len(downloaded_image_list))
-    logger.debug("process_images(): identifier = {}, downloaded_image_list = {},\
-                  use_wand = {}, use_imageio = {}".format(
-                      identifier, downloaded_image_list, use_wand, use_imageio))
+    logger.info(f"... processing {len(downloaded_image_list)} images for {identifier}")
+    logger.debug(f"... process_images(): identifier = {identifier}, downloaded_image_list = {downloaded_image_list}, use_wand = {use_wand}, use_imageio = {use_imageio}")
     image_list = []
     images_for_gif = []
     max_dim = [0, 0]
@@ -230,14 +227,11 @@ def process_images(identifier, downloaded_image_list, post_gif, use_wand=True, u
         for image_file in image_list:
             with Image(filename=image_file) as foreground:
                 foreground.format = 'gif'
-                image_file = image_file.replace(
-                    '.%s' % new_image_format, '.gif')
+                image_file = image_file.replace('.%s' % new_image_format, '.gif')
                 # foreground.transform(resize="{0}x{1}".format(*max_dim))
                 add_margin = 1.03
-                with Image(width=int(max_dim[0]*add_margin), height=int(max_dim[1]*add_margin),
-                           background=Color('white')) as out:
-                    left = int(
-                        (max_dim[0]*add_margin - foreground.size[0]) / 2)
+                with Image(width=int(max_dim[0]*add_margin), height=int(max_dim[1]*add_margin), background=Color('white')) as out:
+                    left = int((max_dim[0]*add_margin - foreground.size[0]) / 2)
                     top = int((max_dim[1]*add_margin - foreground.size[1]) / 2)
                     out.composite(foreground, left=left, top=top)
                     out.save(filename=image_file)
@@ -261,13 +255,25 @@ def process_images(identifier, downloaded_image_list, post_gif, use_wand=True, u
             img_size = os.path.getsize('{id}/{id}.gif'.format(id=identifier))
             if img_size > MAX_IMG_SIZE:
                 images_for_gif = images_for_gif[:-1]
-                logger.info("Image to big ({} bytes), dropping last figure, {} images in GIF".format(
-                    img_size, len(images_for_gif)))
+                logger.info(f"... image too big ({img_size} bytes), dropping last figure, {len(images_for_gif)} images in GIF")
                 # os.remove('{id}/{id}.gif'.format(id=identifier))
             # replace image list by GIF only
         image_list = ['{id}/{id}.gif'.format(id=identifier)]
     return image_list
 
+def get_cover_image(input_doc, use_wand=True):
+    """Turn firt page of document into an image"""
+    logger.info(f"... turning first page of {input_doc} into an image(path) ...")
+    output_image = re.sub("(?i)\.pdf",".png", input_doc).replace("/", "/00-")
+    if use_wand:
+        with Image(filename=input_doc) as doc:
+            first_page = doc.sequence[0]
+            with Image(first_page) as img:
+                img.format = 'png'
+                img.background_color = Color('white')
+                img.alpha_channel = 'remove'
+                img.save(filename=output_image)
+    return output_image
 
 def twitter_auth(auth_dict):
     """Authenticate to twitter."""
@@ -283,7 +289,6 @@ def twitter_auth(auth_dict):
         logger.error(twitter)
         sys.exit(1)
     return twitter
-
 
 def load_config(experiment, feed_file, auth_file):
     """Load configs into dict."""
@@ -310,7 +315,7 @@ def load_config(experiment, feed_file, auth_file):
 
 def upload_images(twitter, image_list, post_gif):
     """Upload images to twitter and return locations."""
-    logger.info("Uploading images.")
+    logger.info("... uploading images")
     image_ids = []
     # loop over sorted images to get the plots in the right order
     for image_path in sorted(image_list):
@@ -327,7 +332,7 @@ def upload_images(twitter, image_list, post_gif):
                         print(twython_error)
                         logger.error(response)
                         sys.exit(1)
-                    logger.info(response)
+                    logger.debug(response)
                     image_ids.append(response["media_id"])
             else:
                 try:
@@ -345,7 +350,7 @@ def split_text(type_hashtag, title, identifier, link, conf_hashtags, phys_hashta
     """Split tweet into several including hashtags and URL in first one"""
     # type_hashtag: aaa bbb ccc .. link conf_hashtags
     # .. ddd eee (identifier)
-    logger.info("Splitting text ...")
+    logger.info(f"... splitting text for {identifier}")
     message_list = []
     # add length+1 if value set
     length_link_and_tags = sum((len(x)>0)+len(x) for x in [link, conf_hashtags, phys_hashtags])
@@ -370,13 +375,13 @@ def split_text(type_hashtag, title, identifier, link, conf_hashtags, phys_hashta
             message = " ".join(filter(None, [message, link, conf_hashtags, phys_hashtags]))
             first_message = False
         message_list.append(message)
-        logger.info("  '" + message + "'")
+        logger.info(f"    '{message}'")
     return message_list
 
 def tweet(twitter, type_hashtag, title, identifier, link, conf_hashtags, phys_hashtags, image_ids, post_gif, bot_handle):
     """tweet the new results with title and link and pictures taking care of length limitations."""
     # type_hashtag: title (identifier) link conf_hashtags
-    logger.info("Creating tweet ...")
+    logger.info(f"... creating tweet for {identifier}")
     # https://dev.twitter.com/rest/reference/get/help/configuration
     tweet_length = 280
     message_list = split_text(type_hashtag, title, identifier, link, conf_hashtags, phys_hashtags, tweet_length, bot_handle)
@@ -384,7 +389,7 @@ def tweet(twitter, type_hashtag, title, identifier, link, conf_hashtags, phys_ha
     previous_status_id = None
     response = {}
     for i, message in enumerate(message_list):
-        logger.info(message)
+        logger.info(f"    {message}")
         logger.debug(len(message))
         if "id" in response:
             previous_status_id = response["id"]
@@ -442,6 +447,8 @@ def main():
     list_analyses = False
     post_gif = True
     use_arxiv_link = False
+    add_cover = False
+    use_only_cover = False
 
     # parse arguments
     parser = argparse.ArgumentParser()
@@ -465,6 +472,10 @@ def main():
                         type=str, default="auth.ini")
     parser.add_argument("--arXiv", help="use arXiv link",
                         action="store_true")
+    parser.add_argument("--addCover", help="add cover as image",
+                        action="store_true")
+    parser.add_argument("--useOnlyCover", help="use only cover page as image (implies --addCover)",
+                        action="store_true")
     args = parser.parse_args()
     max_tweets = args.max
     if args.dry:
@@ -478,11 +489,15 @@ def main():
     if args.analysis:
         analysis_id = args.analysis
         max_tweets = 1
-        logger.info("Looking for analysis with ID %s" % analysis_id)
+        logger.info(f"Looking for analysis with ID {analysis_id}")
     experiment = args.experiment
     feed_file = args.config
     auth_file = args.auth
     use_arxiv_link = args.arXiv
+    add_cover = args.addCover
+    use_only_cover = args.useOnlyCover
+    if use_only_cover:
+        add_cover = True
 
     config = load_config(experiment, feed_file, auth_file)
 
@@ -492,20 +507,19 @@ def main():
         this_feed = read_feed(config['FEED_DICT'][key])
         if this_feed:
             this_feed_entries = this_feed["entries"]
-            logger.info("Found %d items" % len(this_feed_entries))
+            logger.info(f"... found {len(this_feed_entries)} items")
             # add feed info to entries so that we can loop more easily later
             for index, _ in enumerate(this_feed_entries):
                 this_feed_entries[index]["feed_id"] = key
             feed_entries += this_feed_entries
         else:
-            logger.warning(f"Found no items for feed {key}")
+            logger.warning(f"... found no items for feed {key}")
     if list_analyses:
         # sort by feed_id, then date
         logger.info("List of available analyses:")
         for post in sorted(feed_entries,
                            key=lambda x: (x["feed_id"], maya.parse(x["published"]).datetime())):
-            logger.info(" - {post_id} ({feed_id}), published {date}".format(
-                post_id=post["dc_source"], feed_id=post["feed_id"], date=post["published"]))
+            logger.info(f" - {post['dc_source']} ({post['feed_id']}), published {post['published']}")
         return
     twitter = twitter_auth(config['AUTH'])
     # loop over posts sorted by date
@@ -519,24 +533,24 @@ def main():
         parse_result = re.match(r"(CMS-PAS-).{3}-([A-Z]{3}-\d{2}-\d{3})-.*", identifier)
         if parse_result:
             new_identifier = parse_result.group(1)+parse_result.group(2)
-            logger.info(f"Replacing ID {identifier} by {new_identifier}")
+            logger.info(f"... replacing ID {identifier} by {new_identifier}")
             identifier = new_identifier
         if analysis_id:
             if analysis_id not in identifier:
                 continue
             else:
-                logger.info("Found %s in feed %s" % (identifier, post["feed_id"]))
+                logger.info(f"Found {identifier} in feed {post['feed_id']}")
         elif check_id_exists(identifier, post["feed_id"]):
             logger.debug("%s has already been tweeted for feed %s" % (identifier, post["feed_id"]))
             continue
-        logger.info("{id} - published: {date}".format(id=identifier, date=maya.parse(post["published"]).datetime()))
+        logger.info(f"Processing {identifier} - published: {maya.parse(post['published']).datetime()}")
 
         arxiv_id = ""
         # try to find arXiv ID
         if identifier.startswith("arXiv"):
             arxiv_id = identifier.rsplit(":", 1)[1]
-            logger.info("Found arXiv ID arXiv:%s" % arxiv_id)
-            arxiv_link = "https://arxiv.org/abs/%s" % arxiv_id
+            logger.info(f"... found arXiv ID arXiv:{arxiv_id}")
+            arxiv_link = f"https://arxiv.org/abs/{arxiv_id}" 
             logger.debug(arxiv_link)
             request = requests.get(arxiv_link)
             if request.status_code >= 400:
@@ -550,7 +564,7 @@ def main():
         outdir = identifier.replace(':', '_')
         if not os.path.exists(outdir):
             os.makedirs(outdir)
-        logger.debug("Attempting to download media.")
+        logger.debug(f"... attempting to download media for {identifier}")
         # media also includes on the physics
         phys_hashtags = ""
         for media in media_content:
@@ -562,7 +576,7 @@ def main():
                 if parse_result:
                     if parse_result[1] in CADI_TO_HASHTAG:
                         phys_hashtags = CADI_TO_HASHTAG[parse_result[1]]
-                        logger.info(f"Found physics tag: {phys_hashtags}")
+                        logger.info(f"... found physics tag: {phys_hashtags} for {identifier}")
             # consider only attached figures and main doc
             if experiment == "CMS":
                 # CMS follows a certain standard
@@ -637,7 +651,7 @@ def main():
 
         # if there's a zip file and only one PDF, the figures are probably in the zip file
         if any(".zip" in s for s in downloaded_image_list):
-            logger.info("using zip file instead of images")
+            logger.info(f"... using zip file instead of images for {identifier}")
             zipfile_name = [s for s in downloaded_image_list if ".zip" in s][0]
             downloaded_image_list = []
             outzip = f"{outdir}/zipdir"
@@ -654,6 +668,10 @@ def main():
                        (img_path.rsplit("/", 1)[1].startswith("."))):
                     downloaded_image_list.append(img_path)
 
+        if add_cover and len(downloaded_doc_list) == 1:
+            downloaded_image_list[:0] = [get_cover_image(downloaded_doc_list[0])]
+            logger.debug(downloaded_image_list)
+
         image_ids = []
         if downloaded_image_list:
             image_list = process_images(outdir, downloaded_image_list, post_gif)
@@ -668,14 +686,14 @@ def main():
         for item in PRELIM:
             if identifier.find(item) >= 0:
                 prelim_result = True
-                logger.info("This is a preliminary result.")
+                logger.info(f"... {identifier} is a preliminary result")
 
         conf_hashtags = ""
         # use only for PAS/CONF notes:
         if prelim_result:
             conf_hashtags = " ".join(filter(None, (conf.is_now(
                 post["published"]) for conf in CONFERENCES)))
-            logger.info(f"Conference hashtags: {conf_hashtags}")
+            logger.info(f"... {identifier} has conference hashtags: {conf_hashtags}")
 
         type_hashtag = "New result"
         if prelim_result:
@@ -690,11 +708,8 @@ def main():
         if sys.version_info[0] < 3:
             title_formatted = title_formatted.encode('utf8')
 
-        # title_temp = type_hashtag + ": " + title_formatted + " (" + identifier + ") " + link + " " + conf_hashtags
-        # logger.info(title_temp)
-
         # skip entries without media
-        if downloaded_image_list:
+        if len(downloaded_image_list) > add_cover:
             if not dry_run:
                 tweet_count += 1
                 tweet_response = tweet(twitter, type_hashtag, title_formatted, identifier, link, conf_hashtags, phys_hashtags, image_ids, post_gif, config['AUTH']['BOT_HANDLE'])
@@ -703,18 +718,18 @@ def main():
                 #     # first, try to use individual images instead of GIF
                 #     if post_gif:
                 #         if downloaded_image_list:
-                #             logger.info("Trying to tweet without GIF")
+                #             logger.info(f"... trying to tweet {identifier} without GIF")
                 #             image_list = process_images(outdir, downloaded_image_list, post_gif=False)
                 #             image_ids = upload_images(twitter, image_list, post_gif=False)
                 #             tweet_response = tweet(twitter, type_hashtag, title_formatted, identifier, link, conf_hashtags, image_ids, post_gif=False, bot_handle=config['AUTH']['BOT_HANDLE'])
                 # if not tweet_response:
                 #     # second, try to tweet without image
-                #     logger.info("Trying to tweet without images")
+                #     logger.info(f"... trying to tweet {identifier} without images")
                 #     tweet_response = tweet(twitter, type_hashtag, title_formatted, identifier, link, conf_hashtags, image_ids=[], post_gif=False, bot_handle=config['AUTH']['BOT_HANDLE'])
                 if tweet_response:
                     store_id(identifier, post["feed_id"])
         else:
-            logger.info("No media found! Skipping entry.")
+            logger.info(f"... no media found for {identifier}! Holding back on it for now ...")
 
         if not keep_image_dir:
             # clean up images

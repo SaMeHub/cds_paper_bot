@@ -717,7 +717,7 @@ def main():
         # logger.info(title_temp)
 
         # skip entries without media
-        if len(downloaded_image_list) > 1:
+        if len(downloaded_image_list) > add_cover:
             if not dry_run:
                 tweet_count += 1
                 tweet_response = tweet(twitter, type_hashtag, title_formatted, identifier, link, conf_hashtags, phys_hashtags, image_ids, post_gif, config['AUTH']['BOT_HANDLE'])

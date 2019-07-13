@@ -268,16 +268,15 @@ def process_images(identifier, downloaded_image_list, post_gif, use_wand=True, u
 def get_cover_image(input_doc, use_wand=True):
     """Turn firt page of document into an image"""
     logger.info(f"Turning first page of {input_doc} into an image(path) ...")
-    output_image = "00-" + input_doc
-    re.sub("(?i)\.pdf",".png", output_image)
+    output_image = re.sub("(?i)\.pdf",".png", input_doc)
+    output_image.replace("/", "/00-")
     if use_wand:
-        with Image(filename=input_doc) as doc:
-            first_page = doc.sequence[0]
-            with Image(first_page) as img:
-                img.format = 'png'
-                img.background_color = Color('white')
-                img.alpha_channel = 'remove'
-                img.save(filename=output_image)
+        first_page = Image(filename=input_doc).sequence[0]
+        with Image(first_page) as img:
+            img.format = 'png'
+            img.background_color = Color('white')
+            img.alpha_channel = 'remove'
+            img.save(filename=output_image)
     return output_image
 
 def twitter_auth(auth_dict):

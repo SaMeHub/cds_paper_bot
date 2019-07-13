@@ -269,7 +269,7 @@ def get_cover_image(input_doc, use_wand=True):
     """Turn firt page of document into an image"""
     logger.info(f"Turning first page of {input_doc} into an image(path) ...")
     output_image = re.sub("(?i)\.pdf",".png", input_doc)
-    output_image.replace("/", "/00-")
+    output_image.replace("\/", "/00-")
     if use_wand:
         with Image(filename=input_doc) as doc:
             first_page = doc.sequence[0]

@@ -271,12 +271,13 @@ def get_cover_image(input_doc, use_wand=True):
     output_image = re.sub("(?i)\.pdf",".png", input_doc)
     output_image.replace("/", "/00-")
     if use_wand:
-        first_page = Image(filename=input_doc).sequence[0]
-        with Image(first_page) as img:
-            img.format = 'png'
-            img.background_color = Color('white')
-            img.alpha_channel = 'remove'
-            img.save(filename=output_image)
+        with Image(filename=input_doc) as doc:
+            first_page = doc.sequence[0]
+            with Image(first_page) as img:
+                img.format = 'png'
+                img.background_color = Color('white')
+                img.alpha_channel = 'remove'
+                img.save(filename=output_image)
     return output_image
 
 def twitter_auth(auth_dict):

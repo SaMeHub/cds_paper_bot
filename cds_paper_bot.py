@@ -392,6 +392,7 @@ def tweet(twitter, type_hashtag, title, identifier, link, conf_hashtags, phys_ha
     for i, message in enumerate(message_list):
         logger.info(f"    {message}")
         logger.debug(len(message))
+        continue
         if "id" in response:
             previous_status_id = response["id"]
         if post_gif:

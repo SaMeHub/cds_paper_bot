@@ -361,14 +361,15 @@ def split_text(type_hashtag, title, identifier, link, conf_hashtags, phys_hashta
         allowed_length = tweet_length - length_link_and_tags
         if not first_message:
             allowed_length = tweet_length - len(bot_handle) - 3
-            message = bot_handle + " .." + message
+            # message = bot_handle + " .. " + message
+            message = ".. " + message
         if len(message) > allowed_length:
             # strip message at last whitespace and account for 3 dots
             cut_position = message[:allowed_length - 3].rfind(" ")
             message = message[:cut_position]
             remaining_text = remaining_text[cut_position:]
             if cut_position + 3 > len(remaining_text):
-                message = message.strip() + ".."
+                message = message.strip() + " .."
         else:
             remaining_text = ""
         if first_message:
@@ -550,7 +551,7 @@ def main():
         if identifier.startswith("arXiv"):
             arxiv_id = identifier.rsplit(":", 1)[1]
             logger.info(f"... found arXiv ID arXiv:{arxiv_id}")
-            arxiv_link = f"https://arxiv.org/abs/{arxiv_id}" 
+            arxiv_link = f"https://arxiv.org/abs/{arxiv_id}"
             logger.debug(arxiv_link)
             request = requests.get(arxiv_link)
             if request.status_code >= 400:
@@ -715,7 +716,7 @@ def main():
             title_formatted = title_formatted.encode('utf8')
 
         # skip entries without media for ATLAS
-        if experiment != "ATLAS" or len(downloaded_image_list) > add_cover:
+        if experiment != "ATLAS" or len(downloaded_image_list) > add_cover + 1e6:
             if not dry_run:
                 tweet_count += 1
                 tweet_response = tweet(twitter, type_hashtag, title_formatted, identifier, link, conf_hashtags, phys_hashtags, image_ids, post_gif, config['AUTH']['BOT_HANDLE'])

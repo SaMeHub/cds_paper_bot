@@ -361,15 +361,14 @@ def split_text(type_hashtag, title, identifier, link, conf_hashtags, phys_hashta
         allowed_length = tweet_length - length_link_and_tags
         if not first_message:
             allowed_length = tweet_length - len(bot_handle) - 3
-            # message = bot_handle + " .. " + message
-            message = ".. " + message
+            message = bot_handle + " .." + message
         if len(message) > allowed_length:
             # strip message at last whitespace and account for 3 dots
             cut_position = message[:allowed_length - 3].rfind(" ")
             message = message[:cut_position]
             remaining_text = remaining_text[cut_position:]
             if cut_position + 3 > len(remaining_text):
-                message = message.strip() + " .."
+                message = message.strip() + ".."
         else:
             remaining_text = ""
         if first_message:
@@ -383,7 +382,7 @@ def tweet(twitter, type_hashtag, title, identifier, link, conf_hashtags, phys_ha
     """tweet the new results with title and link and pictures taking care of length limitations."""
     # type_hashtag: title (identifier) link conf_hashtags
     logger.info(f"... creating tweet for {identifier}")
-    logger.info(bot_handle)
+    logger.debug(bot_handle)
     # https://dev.twitter.com/rest/reference/get/help/configuration
     tweet_length = 280
     message_list = split_text(type_hashtag, title, identifier, link, conf_hashtags, phys_hashtags, tweet_length, bot_handle)
@@ -392,8 +391,7 @@ def tweet(twitter, type_hashtag, title, identifier, link, conf_hashtags, phys_ha
     response = {}
     for i, message in enumerate(message_list):
         logger.info(f"    {message}")
-        logger.info(len(message))
-        continue
+        logger.debug(len(message))
         if "id" in response:
             previous_status_id = response["id"]
         if post_gif:

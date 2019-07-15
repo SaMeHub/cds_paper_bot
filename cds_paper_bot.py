@@ -719,7 +719,7 @@ def main():
             if not dry_run:
                 tweet_count += 1
                 tweet_response = tweet(twitter, type_hashtag, title_formatted, identifier, link, conf_hashtags, phys_hashtags, image_ids, post_gif, config['AUTH']['BOT_HANDLE'])
-                if not tweet_response and experiment != "ATLAS":
+                if not tweet_response:
                    # try to recover since something went wrong
                    # first, try to use individual images instead of GIF
                    if post_gif:

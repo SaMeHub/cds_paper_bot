@@ -375,7 +375,7 @@ def split_text(type_hashtag, title, identifier, link, conf_hashtags, phys_hashta
             message = " ".join(filter(None, [message, link, conf_hashtags, phys_hashtags]))
             first_message = False
         message_list.append(message)
-        logger.info(f"    '{message}'")
+        # logger.info(f"    '{message}'")
     return message_list
 
 def tweet(twitter, type_hashtag, title, identifier, link, conf_hashtags, phys_hashtags, image_ids, post_gif, bot_handle):

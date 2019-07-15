@@ -383,6 +383,7 @@ def tweet(twitter, type_hashtag, title, identifier, link, conf_hashtags, phys_ha
     """tweet the new results with title and link and pictures taking care of length limitations."""
     # type_hashtag: title (identifier) link conf_hashtags
     logger.info(f"... creating tweet for {identifier}")
+    logger.info(bot_handle)
     # https://dev.twitter.com/rest/reference/get/help/configuration
     tweet_length = 280
     message_list = split_text(type_hashtag, title, identifier, link, conf_hashtags, phys_hashtags, tweet_length, bot_handle)
@@ -391,7 +392,7 @@ def tweet(twitter, type_hashtag, title, identifier, link, conf_hashtags, phys_ha
     response = {}
     for i, message in enumerate(message_list):
         logger.info(f"    {message}")
-        logger.debug(len(message))
+        logger.info(len(message))
         continue
         if "id" in response:
             previous_status_id = response["id"]

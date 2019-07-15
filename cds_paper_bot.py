@@ -543,7 +543,7 @@ def main():
         elif check_id_exists(identifier, post["feed_id"]):
             logger.debug("%s has already been tweeted for feed %s" % (identifier, post["feed_id"]))
             continue
-        logger.info(f"Processing {identifier} - published: {maya.parse(post["published"]).datetime()}")
+        logger.info(f"Processing {identifier} - published: {maya.parse(post['published']).datetime()}")
 
         arxiv_id = ""
         # try to find arXiv ID

@@ -716,7 +716,7 @@ def main():
             title_formatted = title_formatted.encode('utf8')
 
         # skip entries without media for ATLAS
-        if experiment != "ATLAS" or len(downloaded_image_list) > add_cover + 1e6:
+        if experiment != "ATLAS" or len(downloaded_image_list) > add_cover:
             if not dry_run:
                 tweet_count += 1
                 tweet_response = tweet(twitter, type_hashtag, title_formatted, identifier, link, conf_hashtags, phys_hashtags, image_ids, post_gif, config['AUTH']['BOT_HANDLE'])

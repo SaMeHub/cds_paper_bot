@@ -613,10 +613,10 @@ def main():
                         continue
                     if media_isimage:
                         downloaded_image_list.append(out_path)
-                        logger.info("image: " + out_path + " downloaded!")
+                        logger.debug("image: " + out_path + " downloaded!")
                     else:
                         downloaded_doc_list.append(out_path)
-                        logger.info("doc: " + out_path + " downloaded!")
+                        logger.debug("doc: " + out_path + " downloaded!")
 
         # ATLAS notes workaround
         if experiment == "ATLAS" and len(downloaded_image_list) == 0:
@@ -670,15 +670,13 @@ def main():
                     downloaded_image_list.append(img_path)
 
         if add_cover:
-            logger.info("ADD_COVER")
-            logger.info(downloaded_doc_list)
-            logger.info(f".*{re.sub('arXiv.', '', identifier)}\.pdf$")
-            final_docs = list(filter(re.compile(f".*{re.sub('arXiv.', '', identifier)}\.pdf$").match, downloaded_doc_list))
-            logger.info (final_docs)
-            if final_docs:
-                downloaded_image_list[:0] = [get_cover_image(final_docs[0])]
-            elif len(downloaded_doc_list) == 1:
-                downloaded_image_list[:0] = [get_cover_image(downloaded_doc_list[0])]
+            logger.info(f"... adding cover page for {identifier}")
+            if experiment == "ATLAS":
+                final_docs = list(filter(re.compile(f".*{re.sub('arXiv.', '', identifier)}\.pdf$").match, downloaded_doc_list))
+                if final_docs:
+                    downloaded_image_list[:0] = [get_cover_image(final_docs[0])]
+                elif len(downloaded_doc_list) == 1:
+                    downloaded_image_list[:0] = [get_cover_image(downloaded_doc_list[0])]
             logger.debug(downloaded_image_list)
 
         image_ids = []

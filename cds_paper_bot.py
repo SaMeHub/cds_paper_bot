@@ -671,8 +671,9 @@ def main():
 
         if add_cover:
             logger.info("ADD_COVER")
-            logger.info (downloaded_doc_list)
-            final_docs = list(filter(re.compile(f".*{identifier}\.pdf$").match, downloaded_doc_list))
+            logger.info(downloaded_doc_list)
+            logger.info(f".*{identifier.replace('arXiv_', '')}\.pdf$")
+            final_docs = list(filter(re.compile(f".*{identifier.replace('arXiv_', '')}\.pdf$").match, downloaded_doc_list))
             logger.info (final_docs)
             if final_docs:
                 downloaded_image_list[:0] = [get_cover_image(final_docs[0])]

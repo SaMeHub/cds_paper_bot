@@ -669,8 +669,15 @@ def main():
                        (img_path.rsplit("/", 1)[1].startswith("."))):
                     downloaded_image_list.append(img_path)
 
-        if add_cover and len(downloaded_doc_list) == 1:
-            downloaded_image_list[:0] = [get_cover_image(downloaded_doc_list[0])]
+        if add_cover:
+            logger.info("ADD_COVER")
+            logger.info (downloaded_doc_list)
+            final_docs = list(filter(re.compile(f".*{identifier}\.pdf$").match, downloaded_doc_list))
+            logger.info (final_docs)
+            if final_docs:
+                downloaded_image_list[:0] = [get_cover_image(final_docs[0])]
+            elif len(downloaded_doc_list) == 1:
+                downloaded_image_list[:0] = [get_cover_image(downloaded_doc_list[0])]
             logger.debug(downloaded_image_list)
 
         image_ids = []

@@ -4,6 +4,7 @@ set -e
 # echo on
 set -x
 python cds_paper_bot.py -a "arXiv:1907.06131" -d -e "${EXPERIMENT}" --addCover
+python cds_paper_bot.py -a "ATLAS-CONF-2019-034" -d -e "${EXPERIMENT}" --addCover
 # python cds_paper_bot.py -m 1 -e "${EXPERIMENT}" --arXiv --addCover
 if [[ -n $(git status -s) ]]; then
     git checkout master

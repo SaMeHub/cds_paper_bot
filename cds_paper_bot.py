@@ -675,8 +675,12 @@ def main():
                 final_docs = list(filter(re.compile(f".*{re.sub('arXiv.', '', identifier)}\.pdf$").match, downloaded_doc_list))
                 if final_docs:
                     downloaded_image_list[:0] = [get_cover_image(final_docs[0])]
+                    if use_only_cover:
+                        downloaded_image_list = downloaded_image_list[0:1]
                 elif len(downloaded_doc_list) == 1:
                     downloaded_image_list[:0] = [get_cover_image(downloaded_doc_list[0])]
+                    if use_only_cover:
+                        downloaded_image_list = downloaded_image_list[0:1]
             logger.debug(downloaded_image_list)
 
         image_ids = []

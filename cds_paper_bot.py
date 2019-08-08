@@ -545,14 +545,14 @@ def main():
             logger.debug("%s has already been tweeted for feed %s" % (identifier, post["feed_id"]))
             continue
         logger.info(f"Processing {identifier} - published: {maya.parse(post['published']).datetime()}")
+        logger.info(f"... CDS: {post.link}")
 
         arxiv_id = ""
         # try to find arXiv ID
         if identifier.startswith("arXiv"):
             arxiv_id = identifier.rsplit(":", 1)[1]
-            logger.info(f"... found arXiv ID arXiv:{arxiv_id}")
             arxiv_link = f"https://arxiv.org/abs/{arxiv_id}"
-            logger.debug(arxiv_link)
+            logger.info(f"... found arXiv ID arXiv:{arxiv_id} {arxiv_link}")
             request = requests.get(arxiv_link)
             if request.status_code >= 400:
                 logger.warning(f"arXiv URL {arxiv_link} seems invalid")

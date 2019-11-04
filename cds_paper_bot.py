@@ -113,7 +113,7 @@ def format_title(title):
     if overline:
         title = title.replace(f"overline {overline.group(1)}", "overline{%s}" % overline.group(1))
     title = title.replace(" \\overline{", "\\overline{")
-    # fix mathrm
+    # fix "{\mathrm XXX}" to "\mathrm{XXX}"
     mathrm = re.search(r"{\\mathrm (.*)}", title)
     if mathrm:
         title = title.replace(f"\\mathrm {mathrm.group(1)}", "\\mathrm{%s}" % mathrm.group(1))
@@ -727,7 +727,6 @@ def main():
                 type_hashtag += " soon on arXiv"
 
         title_formatted = format_title(title)
-        continue
         if sys.version_info[0] < 3:
             title_formatted = title_formatted.encode('utf8')
 

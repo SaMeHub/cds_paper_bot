@@ -113,6 +113,7 @@ def format_title(title):
     if overline:
         title = title.replace(f"overline {overline.group(1)}", "overline{%s}" % overline.group(1))
     title = title.replace(" \\overline{", "\\overline{")
+    logger.info(f"... DEBUG title \"{title}\"")
     try:
         text_title = LatexNodes2Text().latex_to_text(title)
     except LatexWalkerError as identifier:

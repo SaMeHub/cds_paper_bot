@@ -117,7 +117,6 @@ def format_title(title):
     mathrm = re.search(r"{\\mathrm (.*)}", title)
     if mathrm:
         title = title.replace(f"\\mathrm {mathrm.group(1)}", "\\mathrm{%s}" % mathrm.group(1))
-    logger.info(f"... DEBUG title \"{title}\"")
     try:
         text_title = LatexNodes2Text().latex_to_text(title)
     except LatexWalkerError as identifier:

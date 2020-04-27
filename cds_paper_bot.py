@@ -533,6 +533,8 @@ def main():
         downloaded_image_list = []
         downloaded_doc_list = []
         logger.info(post)
+        if not "dc_source" in post:
+            continue
         identifier = post["dc_source"]
         # fix wrong PAS name:
         parse_result = re.match(r"(CMS-PAS-).{3}-([A-Z]{3}-\d{2}-\d{3})-.*", identifier)

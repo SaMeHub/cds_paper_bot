@@ -214,7 +214,7 @@ def format_title(title):
     mathrm = re.search(r"{\\mathrm (.*)}", title)
     if mathrm:
         title = title.replace(
-            f"\\mathrm {mathrm.group(1)}", "\\mathrm{%s}" % mathrm.group(1))
+            f"\\mathrm {mathrm.group(1)}", "\\mathrm{%s}" % mathrm.group(1)
         )
     # overline{D} gives problems when in mathrm
     title = title.replace("\\overline{D", "\\bar{D")

@@ -434,7 +434,7 @@ def load_config(experiment, feed_file, auth_file):
     # load the feed config
     config.read(feed_file)
     if experiment not in config.sections():
-        logger.error(f"Experiment {experiment} not found in feed_file{}")
+        logger.error(f"Experiment {experiment} not found in {feed_file}")
     config_dict["FEED_DICT"] = {}
     for key in config[experiment]:
         config_dict["FEED_DICT"][key.upper()] = config[experiment][key]

@@ -276,6 +276,11 @@ def process_images(
     logger.debug(
         f"... process_images(): identifier = {identifier}, downloaded_image_list = {downloaded_image_list}, use_wand = {use_wand}, use_imageio = {use_imageio}"
     )
+    if len(downloaded_image_list) > 50:
+        downloaded_image_list = downloaded_image_list[:49]
+        logger.info(f"... limiting number of plots to 50")
+        logger.info(f"... processing {len(downloaded_image_list)} images for {identifier}")
+
     image_list = []
     images_for_gif = []
     max_dim = [0, 0]

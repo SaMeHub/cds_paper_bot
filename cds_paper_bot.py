@@ -294,7 +294,7 @@ def process_images(
         if use_wand:
             # , resolution=300
             try:
-                logger.info(f"XXXXX1 - {}[0]".format(image_file))
+                logger.info(f"XXXXX1 - {image_file}[0]")
                 with Image(filename="{}[0]".format(image_file)) as img:
                     logger.info(f"XXXXX2")
                     # process pdfs here only, others seem to be far too big

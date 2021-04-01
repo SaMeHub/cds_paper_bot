@@ -292,13 +292,13 @@ def process_images(
     # first loop to find maximum PDF dimensions to have high quality images
     for image_file in downloaded_image_list:
         img_size = os.path.getsize(image_file)
-        logger.info(f"XXXXX0 - {img_size}")
-        if use_wand and img_size < MAX_IMG_SIZE:
+        if img_size > MAX_IMG_SIZE:
+          logger.info(f"... image {image_file} too big ({img_size} bytes)")
+          continue
+        if use_wand:
             # , resolution=300
             try:
-                logger.info(f"XXXXX1 - {image_file}[0]")
                 with Image(filename="{}[0]".format(image_file)) as img:
-                    logger.info(f"XXXXX2")
                     # process pdfs here only, others seem to be far too big
                     img.format = new_image_format
                     img.background_color = Color("white")
@@ -314,16 +314,13 @@ def process_images(
                         filename = filename.replace(".pdf", ".%s" % new_image_format)
                     # save image in list
                     image_list.append(filename)
-                    logger.info(f"XXXXX3")
                     img.save(filename=filename)
-                    logger.info(f"XXXXX4")
                     dim_list_x.append(img.size[0])
                     dim_list_y.append(img.size[1])
                     # need to save max dimensions for gif canvas
                     for i, _ in enumerate(max_dim):
                         if img.size[i] > max_dim[i]:
                             max_dim[i] = img.size[i]
-                logger.info(f"XXXXX5")
             except CorruptImageError as corrupt_except:
                 print(corrupt_except)
                 print("Ignoring", image_file)
@@ -338,7 +335,6 @@ def process_images(
         max(min(MAX_IMG_DIM, average_dims[0]), min(MAX_IMG_DIM, average_dims[0]))
     )
 
-    logger.info(f"XXXXX6")
     # print(max_dim[0], max_dim[1], dim_xy, MAX_IMG_DIM)
     # reset max_dim again
     max_dim = [0, 0]
@@ -358,7 +354,6 @@ def process_images(
                         max_dim[i] = img.size[i]
                 img.save(filename=filename)
 
-    logger.info(f"XXXXX7")
     # bring list in order again
     image_list = sorted(image_list)
     if post_gif:
@@ -410,7 +405,6 @@ def process_images(
                 # os.remove('{id}/{id}.gif'.format(id=identifier))
             # replace image list by GIF only
         image_list = ["{id}/{id}.gif".format(id=identifier)]
-    logger.info(f"XXXXX8")
     return image_list
 
 def get_cover_image(input_doc, use_wand=True):

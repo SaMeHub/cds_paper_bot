@@ -321,6 +321,7 @@ def process_images(
                     for i, _ in enumerate(max_dim):
                         if img.size[i] > max_dim[i]:
                             max_dim[i] = img.size[i]
+                logger.info(f"XXXXX5")
             except CorruptImageError as corrupt_except:
                 print(corrupt_except)
                 print("Ignoring", image_file)
@@ -335,6 +336,7 @@ def process_images(
         max(min(MAX_IMG_DIM, average_dims[0]), min(MAX_IMG_DIM, average_dims[0]))
     )
 
+    logger.info(f"XXXXX6")
     # print(max_dim[0], max_dim[1], dim_xy, MAX_IMG_DIM)
     # reset max_dim again
     max_dim = [0, 0]
@@ -354,6 +356,7 @@ def process_images(
                         max_dim[i] = img.size[i]
                 img.save(filename=filename)
 
+    logger.info(f"XXXXX7")
     # bring list in order again
     image_list = sorted(image_list)
     if post_gif:
@@ -405,6 +408,7 @@ def process_images(
                 # os.remove('{id}/{id}.gif'.format(id=identifier))
             # replace image list by GIF only
         image_list = ["{id}/{id}.gif".format(id=identifier)]
+    logger.info(f"XXXXX8")
     return image_list
 
 def get_cover_image(input_doc, use_wand=True):

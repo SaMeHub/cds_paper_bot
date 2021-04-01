@@ -294,7 +294,9 @@ def process_images(
         if use_wand:
             # , resolution=300
             try:
+                logger.info(f"XXXXX1")
                 with Image(filename="{}[0]".format(image_file)) as img:
+                    logger.info(f"XXXXX2")
                     # process pdfs here only, others seem to be far too big
                     img.format = new_image_format
                     img.background_color = Color("white")
@@ -310,7 +312,9 @@ def process_images(
                         filename = filename.replace(".pdf", ".%s" % new_image_format)
                     # save image in list
                     image_list.append(filename)
+                    logger.info(f"XXXXX3")
                     img.save(filename=filename)
+                    logger.info(f"XXXXX4")
                     dim_list_x.append(img.size[0])
                     dim_list_y.append(img.size[1])
                     # need to save max dimensions for gif canvas

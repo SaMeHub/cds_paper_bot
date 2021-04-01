@@ -291,7 +291,7 @@ def process_images(
 
     # first loop to find maximum PDF dimensions to have high quality images
     for image_file in downloaded_image_list:
-        img_size = os.path.getsize("{id}/{id}.gif".format(id=identifier))
+        img_size = os.path.getsize(image_file)
         logger.info(f"XXXXX0 - {img_size}")
         if use_wand and img_size < MAX_IMG_SIZE:
             # , resolution=300

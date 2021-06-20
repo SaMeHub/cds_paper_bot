@@ -296,6 +296,7 @@ def process_images(
 
     # first loop to find maximum PDF dimensions to have high quality images
     for image_file in downloaded_image_list:
+logger.info(f"DEBUG ... image {image_file} for {identifier}")
         img_size = os.path.getsize(image_file)
         if img_size > MAX_IMG_SIZE:
           logger.info(f"... image {image_file} too big ({img_size} bytes)")

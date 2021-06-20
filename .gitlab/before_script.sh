@@ -26,8 +26,10 @@ set -x
 # # Set git user name and email
 git config --global user.email "${GITMAIL}"
 git config --global user.name "${GITNAME}"
-git config --global http.postBuffer 524288000
-git config --global https.postBuffer 524288000
+git config --global http.postBuffer 1048576000
+git config --global https.postBuffer 1048576000
+# git config --global http.postBuffer 524288000
+# git config --global https.postBuffer 524288000
 
 set +x
 echo "auth.ini created for ${EXPERIMENT}"

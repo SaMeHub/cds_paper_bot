@@ -25,7 +25,7 @@ import imageio
 
 # Maximum image dimension (both x and y)
 MAX_IMG_DIM = 1000  # was 1200
-MAX_IMG_SIZE = 5242880
+MAX_IMG_SIZE = 3000000 # was 5242880
 # TODO: tag actual experiment?
 # TODO: Make certain keywords tags
 # collection could be: Higgs, NewPhysics, 13TeV/8TeV, StandardModel,

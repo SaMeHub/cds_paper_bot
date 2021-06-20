@@ -298,11 +298,15 @@ def process_images(
     for image_file in downloaded_image_list:
         img_size = os.path.getsize(image_file)
         logger.info(f"DEBUG ... image {image_file} ({img_size} bytes) for {identifier}")
-        while os.path.getsize(image_file) > MAX_IMG_SIZE:
+        if img_size > MAX_IMG_SIZE:
             logger.info(f"... image {image_file} too big ({img_size} bytes)")
-            command = "convert {image_file} -resize 75% {image_file}"
-            execute_command(command)
-            img_size = os.path.getsize(image_file)
+            continue
+        # convert is not available by default
+        # while os.path.getsize(image_file) > MAX_IMG_SIZE:
+        #     logger.info(f"... image {image_file} too big ({img_size} bytes)")
+        #     command = "convert {image_file} -resize 75% {image_file}"
+        #     execute_command(command)
+        #     img_size = os.path.getsize(image_file)
         if use_wand:
             # , resolution=300
             try:

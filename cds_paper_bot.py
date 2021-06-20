@@ -305,6 +305,7 @@ def process_images(
             # , resolution=300
             try:
                 with Image(filename="{}[0]".format(image_file)) as img:
+                    logger.info(f"DEBUG ... wand image {image_file}")
                     # process pdfs here only, others seem to be far too big
                     img.format = new_image_format
                     img.background_color = Color("white")
@@ -332,6 +333,7 @@ def process_images(
                 print("Ignoring", image_file)
             except Exception as general_exception:  # pylint: disable=broad-except
                 print(general_exception)
+    logger.info(f"DEBUG ... past first loop {image_file}")
     # rescale images
     average_dims = (
         float(sum(dim_list_x)) / max(len(dim_list_x), 1),

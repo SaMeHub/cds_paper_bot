@@ -297,7 +297,6 @@ def process_images(
     # first loop to find maximum PDF dimensions to have high quality images
     for image_file in downloaded_image_list:
         img_size = os.path.getsize(image_file)
-        logger.info(f"DEBUG ... image {image_file} ({img_size} bytes) for {identifier}")
         if img_size > MAX_IMG_SIZE:
             logger.info(f"... image {image_file} too big ({img_size} bytes)")
             continue
@@ -311,7 +310,6 @@ def process_images(
             # , resolution=300
             try:
                 with Image(filename="{}[0]".format(image_file)) as img:
-                    logger.info(f"DEBUG ... wand image {image_file}")
                     # process pdfs here only, others seem to be far too big
                     img.format = new_image_format
                     img.background_color = Color("white")
@@ -339,7 +337,6 @@ def process_images(
                 print("Ignoring", image_file)
             except Exception as general_exception:  # pylint: disable=broad-except
                 print(general_exception)
-    logger.info(f"DEBUG ... past first loop {image_file}")
     # rescale images
     average_dims = (
         float(sum(dim_list_x)) / max(len(dim_list_x), 1),

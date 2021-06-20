@@ -29,9 +29,9 @@ RUN \
   && sed -i '/MVG/d' /etc/ImageMagick-6/policy.xml \
   && sed -i '/PDF/{s/none/read|write/g}' /etc/ImageMagick-6/policy.xml \
   && sed -i '/PDF/ a <policy domain="coder" rights="read|write" pattern="LABEL" />' /etc/ImageMagick-6/policy.xml \
-  && sed -i 's/^.*<policy domain="resource" name="width" value=".*"/>.*$/<policy domain="resource" name="width" value="64KP"/>/g' /etc/ImageMagick-6/policy.xml \
-  && sed -i 's/^.*<policy domain="resource" name="height" value=".*"/>.*$/<policy domain="resource" name="width" value="64KP"/>/g' /etc/ImageMagick-6/policy.xml \
-  && sed -i 's/^.*<policy domain="resource" name="disk" value=".*"/>.*$/<policy domain="resource" name="width" value="4GiB"/>/g' /etc/ImageMagick-6/policy.xml \
+  && sed -i 's/^.*<policy domain="resource" name="width" value=".*"\/>.*$/<policy domain="resource" name="width" value="64KP"\/>/g' /etc/ImageMagick-6/policy.xml \
+  && sed -i 's/^.*<policy domain="resource" name="height" value=".*"\/>.*$/<policy domain="resource" name="width" value="64KP"\/>/g' /etc/ImageMagick-6/policy.xml \
+  && sed -i 's/^.*<policy domain="resource" name="disk" value=".*"\/>.*$/<policy domain="resource" name="width" value="4GiB"\/>/g' /etc/ImageMagick-6/policy.xml \
   # install python and pip
   && pip3 install --upgrade pip setuptools \
   # make some useful symlinks that are expected to exist

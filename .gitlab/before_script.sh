@@ -33,5 +33,3 @@ git config --global https.postBuffer 1048576000
 
 set +x
 echo "auth.ini created for ${EXPERIMENT}"
-
-cat /etc/ImageMagick-6/policy.xml | grep "resource\|PDF"

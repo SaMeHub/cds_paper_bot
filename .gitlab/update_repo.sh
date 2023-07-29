@@ -4,7 +4,7 @@
 # # echo on
 # set -x
 # git checkout master
-# git remote add upstream https://github.com/clelange/cds_paper_bot.git
+# git remote add upstream https://github.com/SaMeHub/cds_paper_bot.git
 # git fetch upstream
 # if [[ -n $(git log ..upstream/master) ]]; then
 #     git config --global user.email "${GITMAIL}"

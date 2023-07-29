@@ -37,6 +37,6 @@ RUN \
   && /bin/bash -c "if [[ ! -e /usr/bin/python-config ]]; then ln -sf /usr/bin/python3-config /usr/bin/python-config; fi" \
   && /bin/bash -c "if [[ ! -e /usr/bin/pip ]]; then ln -sf /usr/bin/pip3 /usr/bin/pip; fi" \
   # install python requirements
-  && pip install --no-cache-dir --ignore-installed -r /tmp/requirements.txt
+  && pip install --verbose --no-cache-dir --ignore-installed -r /tmp/requirements.txt
 
 CMD = ["python"]

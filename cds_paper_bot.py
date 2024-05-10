@@ -36,7 +36,7 @@ MAX_IMG_SIZE = 5242880
 # Also: CMSB2G, CMSHIG, CMSEXO etc.
 # TopQuark, BottomQuark Quark/Quarks, Tau
 CADI_TO_HASHTAG = {}
-CADI_TO_HASHTAG["HIG"] = "#HiggsBoson"
+CADI_TO_HASHTAG["TOP"] = "#TopQuark"
 CADI_TO_HASHTAG["HIG"] = "#HiggsBoson"
 CADI_TO_HASHTAG["B2G"] = "#NewPhysics"
 CADI_TO_HASHTAG["EXO"] = "#NewPhysics"
@@ -116,34 +116,6 @@ CONFERENCES.append(
 
 daiquiri.setup(level=logging.INFO)
 logger = daiquiri.getLogger()  # pylint: disable=invalid-name
-
-
-def get_twitter_conn_v1(
-    api_key, api_secret, access_token, access_token_secret
-) -> tweepy.API:
-    """Get twitter conn 1.1"""
-
-    auth = tweepy.OAuth1UserHandler(api_key, api_secret)
-    auth.set_access_token(
-        access_token,
-        access_token_secret,
-    )
-    return tweepy.API(auth)
-
-
-def get_twitter_conn_v2(
-    api_key, api_secret, access_token, access_token_secret
-) -> tweepy.Client:
-    """Get twitter conn 2.0"""
-
-    client = tweepy.Client(
-        consumer_key=api_key,
-        consumer_secret=api_secret,
-        access_token=access_token,
-        access_token_secret=access_token_secret,
-    )
-
-    return client
 
 
 def get_twitter_conn_v1(
@@ -899,13 +871,6 @@ def main():
         "-l", "--list", help="list analyses for feeds, then quit", action="store_true"
     )
     parser.add_argument("-g", "--nogif", help="do not create GIF", action="store_true")
-    parser.add_argument(
-        "-f",
-        "--figmax",
-        help="maximum number of figures to use for GIF",
-        type=int,
-        default=20,
-    )
     parser.add_argument(
         "-f",
         "--figmax",

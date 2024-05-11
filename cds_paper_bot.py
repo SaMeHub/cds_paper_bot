@@ -26,7 +26,8 @@ from wand.image import Image, Color
 from wand.exceptions import CorruptImageError  # pylint: disable=no-name-in-module
 
 # Maximum image dimension (both x and y)
-MAX_IMG_DIM = 1000  # could be 1280
+MAX_IMG_DIM_X = 1000  # was 1200, could be 1280
+MAX_IMG_DIM_Y = 720
 MAX_IMG_DIM_AREA = 1280 * 720  # 1 megapixel
 MAX_IMG_SIZE = 5242880
 # TODO: tag actual experiment?
@@ -391,7 +392,7 @@ def process_images(identifier, downloaded_image_list, post_gif, use_wand=True):
         float(sum(dim_list_y)) / max(len(dim_list_y), 1),
     )
     dim_xy = int(
-        max(min(MAX_IMG_DIM, average_dims[0]), min(MAX_IMG_DIM, average_dims[0]))
+        max(min(MAX_IMG_DIM_X, average_dims[0]), min(MAX_IMG_DIM_Y, average_dims[0]))
     )
 
     # reset max_dim again
